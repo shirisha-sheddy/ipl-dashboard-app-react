@@ -2,6 +2,7 @@
 // Write your code here
 import {Component} from 'react'
 import Loader from 'react-loader-spinner'
+import {Link} from 'react-router-dom'
 
 import LatestMatch from '../LatestMatch'
 import MatchCard from '../MatchCard'
@@ -56,6 +57,22 @@ class TeamMatches extends Component {
     this.setRecentMatches(formattedData, false)
   }
 
+  getNoOfMatches = value => {
+    const {teamMatchesData} = this.state
+    const {latestMatch, recentMatches} = teamMatchesData
+    const currentMatch = value === latestMatch.matchStatus ? 1 : 0
+    const result =
+      recentMatches.filter(match => match.matchStatus === value).length +
+      currentMatch
+    return result
+  }
+
+  generatePieChartData = () => [
+    {name: 'Won', value: this.getNoOfMatches('Won')},
+    {name: 'Lost', value: this.getNoOfMatches('Lost')},
+    {name: 'Drawn', value: this.getNoOfMatches('Drawn')},
+  ]
+
   renderRecentMatchesList = () => {
     const {recentMatchesData} = this.state
     const {recentMatches} = recentMatchesData
@@ -81,7 +98,14 @@ class TeamMatches extends Component {
       <div className="team-matches-container">
         <img src={teamBannerURL} alt="team banner" className="team-banner" />
         <LatestMatch latestMatchData={latestMatch} />
+        <h1 className="latest-match-heading mt-3">Team Statistics</h1>
+
         {this.renderRecentMatchesList()}
+        <Link to="/">
+          <button type="button" className="back-button">
+            Back
+          </button>
+        </Link>
       </div>
     )
   }
